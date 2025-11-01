@@ -89,6 +89,36 @@ const paths = {
         "table": "https://www.sports.ru/football/tournament/chinese-super-league/table/",
         "fixtures": "https://www.sports.ru/football/tournament/chinese-super-league/calendar/",
     },
+    'SPL': {
+        "name": "Saudi Pro League",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/saudi-pro-league/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/saudi-pro-league/calendar/",
+    },
+    'Serie A': {
+        "name": "Serie A",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/seria-a/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/seria-a/calendar/",
+    },
+    'Serie B': {
+        "name": "Serie B",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/serie-b/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/serie-b/calendar/",
+    },
+    'Ligue 1': {
+        "name": "Ligue 1",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/ligue-1/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/ligue-1/calendar/",
+    },
+    'Ligue 2': {
+        "name": "Ligue 2",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/ligue-2/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/ligue-2/calendar/",
+    },
 };
 
 module.exports = paths;
