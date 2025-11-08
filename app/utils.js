@@ -75,9 +75,9 @@ function checkGames(fixtures, teams, league) {
     for (const fixture of fixtures) {
         if ((teams['leaders'].includes(fixture['home']) && teams['bottoms'].includes(fixture['away'])) ||
             (teams['bottoms'].includes(fixture['home']) && teams['leaders'].includes(fixture['away']))) {
-            console.log(fixture)
             fixture['league'] = league;
             games.push(fixture);
+            console.log(fixture);
         }
     }
     if (games.length === 0) {
@@ -87,26 +87,26 @@ function checkGames(fixtures, teams, league) {
 }
 
 
-(async () => {
-    const start = hrtime.bigint();
-    let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
-    for (const league of Object.keys(paths)) {
-        console.log(paths[league]['name']);
-        const results = await getLeaders(paths[league]['table']);
-        const fixtures = await getFixtures(paths[league]['fixtures']);
-        // console.log(results);
-        // if (league === 'National League') {
-        //     console.log(fixtures);
-        // }
-        const games = checkGames(fixtures, results, league['name']);
-        for (const game of games) {
-            let tableRow = game['date'] + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + '\n';
-            writer.write(tableRow);
-        }
-    }
-    const end = hrtime.bigint();
-    console.log(`process took ${(end - start) / BigInt(10 ** 9)} seconds`);
-})();
+// (async () => {
+//     const start = hrtime.bigint();
+//     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
+//     for (const league of Object.keys(paths)) {
+//         console.log(paths[league]['name']);
+//         const results = await getLeaders(paths[league]['table']);
+//         const fixtures = await getFixtures(paths[league]['fixtures']);
+//         // console.log(results);
+//         // if (league === 'National League') {
+//         //     console.log(fixtures);
+//         // }
+//         const games = checkGames(fixtures, results, paths[league]['name']);
+//         for (const game of games) {
+//             let tableRow = game['date'] + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + '\n';
+//             writer.write(tableRow);
+//         }
+//     }
+//     const end = hrtime.bigint();
+//     console.log(`process took ${(end - start) / BigInt(10 ** 9)} seconds`);
+// })();
 
 
-module.exports = { getLeaders }
+module.exports = checkGames; 

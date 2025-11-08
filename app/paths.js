@@ -119,6 +119,30 @@ const paths = {
         "table": "https://www.sports.ru/football/tournament/ligue-2/table/",
         "fixtures": "https://www.sports.ru/football/tournament/ligue-2/calendar/",
     },
+    'Greece 1': {
+        "name": "Super League Ellada",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/superleague-greece/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/superleague-greece/calendar/",
+    },
+    'Belgium 1': {
+        "name": "Jupiler Pro League",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/jupiler-pro-league/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/jupiler-pro-league/calendar/",
+    },
+    'Belgium 2': {
+        "name": "Challenger Pro League",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/exqi-league/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/exqi-league/calendar/",
+    },
+    'Estonia 1': {
+        "name": "A. LeCoq Premium Liiga",
+        "sport": "Football",
+        "table": "https://www.sports.ru/football/tournament/meistriliiga/table/",
+        "fixtures": "https://www.sports.ru/football/tournament/meistriliiga/calendar/",
+    },
 };
 
 module.exports = paths;
