@@ -4,13 +4,13 @@ const { hrtime } = require('node:process');
 const fs = require('fs');
 const checkGames = require('./utils');
 
-const numberOfGames = 70;
+const numberOfGames = 20;
 
 async function fgetLeaders(path) {
     // console.log(path);
     const leaders = [];
     const bottoms = [];
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(path);
     await page.setViewport({ width: 1080, height: 1024 });
