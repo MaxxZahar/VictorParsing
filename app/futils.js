@@ -4,7 +4,7 @@ const { hrtime } = require('node:process');
 const fs = require('fs');
 const checkGames = require('./utils');
 
-const numberOfGames = 20;
+const numberOfGames = 10;
 
 async function fgetLeaders(path) {
     // console.log(path);
@@ -17,7 +17,7 @@ async function fgetLeaders(path) {
     const leaderHandles = await page.$$('#tournament-table a.tableCellParticipant__name');
     // console.log(leaderHandles.length);
     // console.log(leaderHandles[0]);
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
         try {
             const leaderName = await page.evaluate(el =>
                 el.textContent.trim(), leaderHandles[i]);
@@ -117,12 +117,12 @@ async function fgetFixtures(path) {
         // if (league === 'National League') {
         //     console.log(fixtures);
         // }
-        const games = checkGames(fixtures, results, paths[league]['name']);
+        const games = checkGames(fixtures, results, paths[league]['name'], paths[league]['country']);
         for (const game of games) {
-            let tableRow = game['date'] + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + '\n';
+            let tableRow = game['date'] + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + '\n';
             writer.write(tableRow);
         }
     }
     const end = hrtime.bigint();
-    console.log(`process took ${(end - start) / BigInt(10 ** 9)} seconds`);
+    console.log(`process took ${(end - start) / BigInt(60 * 10 ** 9)} minutes`);
 })();

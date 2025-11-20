@@ -1,3 +1,4 @@
 app/node_modules
 app/res.js
 data/games.csv
+.vscode

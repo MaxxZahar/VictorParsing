@@ -70,12 +70,13 @@ async function getFixtures(path) {
 }
 
 
-function checkGames(fixtures, teams, league) {
+function checkGames(fixtures, teams, league, country) {
     const games = [];
     for (const fixture of fixtures) {
         if ((teams['leaders'].includes(fixture['home']) && teams['bottoms'].includes(fixture['away'])) ||
             (teams['bottoms'].includes(fixture['home']) && teams['leaders'].includes(fixture['away']))) {
             fixture['league'] = league;
+            fixture['country'] = country;
             games.push(fixture);
             console.log(fixture);
         }
