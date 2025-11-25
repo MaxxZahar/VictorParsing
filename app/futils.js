@@ -135,7 +135,7 @@ async function fgetFixtures(path) {
         // }
         const games = checkGames(fixtures, results, paths[league]['name'], paths[league]['country']);
         for (const game of games) {
-            let tableRow = game['date'] + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + '\n';
+            let tableRow = game['date'].slice(0, 5) + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + '\n';
             writer.write(tableRow);
         }
     }
