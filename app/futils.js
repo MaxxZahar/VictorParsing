@@ -12,8 +12,18 @@ const bottomD = {
     20: 4,
 };
 
-async function fgetLeaders(path) {
+async function fgetLeaders(path, number) {
     // console.log(path);
+    let bottomQ;
+    if (number < 12) {
+        bottomQ = 2;
+    } else if (number < 16) {
+        bottomQ = 3;
+    } else if (number < 20) {
+        bottomQ = 4;
+    } else {
+        bottomQ = 5;
+    }
     const leaders = [];
     const bottoms = [];
     const browser = await puppeteer.launch({ headless: true });
@@ -23,7 +33,7 @@ async function fgetLeaders(path) {
     const leaderHandles = await page.$$('#tournament-table a.tableCellParticipant__name');
     // console.log(leaderHandles.length);
     // console.log(leaderHandles[0]);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < topQ; i++) {
         try {
             const leaderName = await page.evaluate(el =>
                 el.textContent.trim(), leaderHandles[i]);
@@ -32,7 +42,7 @@ async function fgetLeaders(path) {
             console.log(err.message);
         }
     }
-    for (let i = leaderHandles.length - 4; i < leaderHandles.length; i++) {
+    for (let i = leaderHandles.length - bottomQ; i < leaderHandles.length; i++) {
         try {
             const bottomName = await page.evaluate(el =>
                 el.textContent.trim(), leaderHandles[i]);
@@ -117,7 +127,7 @@ async function fgetFixtures(path) {
     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
     for (const league of Object.keys(paths)) {
         console.log(paths[league]['name']);
-        const results = await fgetLeaders(paths[league]['table']);
+        const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams']);
         const fixtures = await fgetFixtures(paths[league]['fixtures']);
         // console.log(results);
         // if (league === 'National League') {
