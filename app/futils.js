@@ -5,6 +5,12 @@ const fs = require('fs');
 const checkGames = require('./utils');
 
 const numberOfGames = 10;
+const topQ = 3;
+const bottomD = {
+    12: 2,
+    16: 3,
+    20: 4,
+};
 
 async function fgetLeaders(path) {
     // console.log(path);
