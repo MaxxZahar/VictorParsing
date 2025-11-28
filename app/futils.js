@@ -124,7 +124,9 @@ async function fgetFixtures(path) {
 
 (async () => {
     const start = hrtime.bigint();
+    const header = `Date;Home;Away;League;Country\n`;
     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
+    writer.write(header);
     for (const league of Object.keys(paths)) {
         console.log(paths[league]['name']);
         const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams']);
