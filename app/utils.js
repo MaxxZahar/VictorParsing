@@ -73,8 +73,8 @@ async function getFixtures(path) {
 function checkGames(fixtures, teams, league, country) {
     const games = [];
     for (const fixture of fixtures) {
-        if ((teams['leaders'].includes(fixture['home']) && teams['bottoms'].includes(fixture['away'])) ||
-            (teams['bottoms'].includes(fixture['home']) && teams['leaders'].includes(fixture['away']))) {
+        if ((teams['leaders'].map(leader => leader['name']).includes(fixture['home']) && teams['bottoms'].map(bottom => bottom['name']).includes(fixture['away'])) ||
+            (teams['bottoms'].map(bottom => bottom['name']).includes(fixture['home']) && teams['leaders'].map(leader => leader['name']).includes(fixture['away']))) {
             fixture['league'] = league;
             fixture['country'] = country;
             games.push(fixture);

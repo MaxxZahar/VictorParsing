@@ -37,7 +37,7 @@ async function fgetLeaders(path, number) {
         try {
             const leaderName = await page.evaluate(el =>
                 el.textContent.trim(), leaderHandles[i]);
-            leaders.push(leaderName);
+            leaders.push({ 'name': leaderName, 'position': i + 1 });
         } catch (err) {
             console.log(err.message);
         }
@@ -46,7 +46,7 @@ async function fgetLeaders(path, number) {
         try {
             const bottomName = await page.evaluate(el =>
                 el.textContent.trim(), leaderHandles[i]);
-            bottoms.push(bottomName);
+            bottoms.push({ 'name': bottomName, 'position': i + 1 });
         } catch (err) {
             console.log(err.message);
         }
@@ -137,6 +137,17 @@ async function fgetFixtures(path) {
         // }
         const games = checkGames(fixtures, results, paths[league]['name'], paths[league]['country']);
         for (const game of games) {
+            const leaderHome = results['leaders'].filter(leader => leader['name'] === game['home']);
+            const leaderAway = results['leaders'].filter(leader => leader['name'] === game['away']);
+            const bottomHome = results['bottoms'].filter(bottom => bottom['name'] === game['home']);
+            const bottomAway = results['bottoms'].filter(bottom => bottom['name'] === game['away']);
+            if (leaderHome.length === 1) {
+                game['home'] += ` (${leaderHome[0]['position']})`;
+                game['away'] += ` (${bottomAway[0]['position']})`;
+            } else {
+                game['home'] += ` (${bottomHome[0]['position']})`;
+                game['away'] += ` (${leaderAway[0]['position']})`;
+            }
             let tableRow = game['date'].slice(0, 5) + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + '\n';
             writer.write(tableRow);
         }
