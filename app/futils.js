@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const paths = require('./fpaths');
+// for dev test
+// const paths = require('./tpaths');
 const { hrtime } = require('node:process');
 const fs = require('fs');
 const checkGames = require('./utils');
@@ -124,7 +126,7 @@ async function fgetFixtures(path) {
 
 (async () => {
     const start = hrtime.bigint();
-    const header = `Date;Home;Away;League;Country\n`;
+    const header = `Date;Home;Away;League;Country;Teams;Sport\n`;
     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
     writer.write(header);
     for (const league of Object.keys(paths)) {
@@ -135,7 +137,7 @@ async function fgetFixtures(path) {
         // if (league === 'National League') {
         //     console.log(fixtures);
         // }
-        const games = checkGames(fixtures, results, paths[league]['name'], paths[league]['country']);
+        const games = checkGames(fixtures, results, paths[league]);
         for (const game of games) {
             const leaderHome = results['leaders'].filter(leader => leader['name'] === game['home']);
             const leaderAway = results['leaders'].filter(leader => leader['name'] === game['away']);
@@ -148,7 +150,7 @@ async function fgetFixtures(path) {
                 game['home'] += ` (${bottomHome[0]['position']})`;
                 game['away'] += ` (${leaderAway[0]['position']})`;
             }
-            let tableRow = game['date'].slice(0, 5) + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + '\n';
+            let tableRow = game['date'].slice(0, 5) + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + ';' + game['numberOfTeams'] + ';' + game['sport'] + '\n';
             writer.write(tableRow);
         }
     }
