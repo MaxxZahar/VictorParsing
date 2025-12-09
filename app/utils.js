@@ -79,6 +79,7 @@ function checkGames(fixtures, teams, league) {
             fixture['country'] = league['country'];
             fixture['numberOfTeams'] = league['numberOfTeams'];
             fixture['sport'] = league['sport'];
+            fixture['leg'] = teams['leg'];
             games.push(fixture);
             console.log(fixture);
         }

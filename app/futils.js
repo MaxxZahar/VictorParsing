@@ -53,8 +53,10 @@ async function fgetLeaders(path, number) {
             console.log(err.message);
         }
     }
+    const legHandle = await page.$('#tournament-table .ui-table__row');
+    const leg = await page.evaluate(el => el.querySelector('.table__cell.table__cell--value').textContent.trim(), legHandle);
     await browser.close();
-    return { 'leaders': leaders, 'bottoms': bottoms };
+    return { 'leaders': leaders, 'bottoms': bottoms, 'leg': leg };
 }
 
 
@@ -126,32 +128,36 @@ async function fgetFixtures(path) {
 
 (async () => {
     const start = hrtime.bigint();
-    const header = `Date;Home;Away;League;Country;Teams;Sport\n`;
+    const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
     writer.write(header);
     for (const league of Object.keys(paths)) {
         console.log(paths[league]['name']);
-        const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams']);
-        const fixtures = await fgetFixtures(paths[league]['fixtures']);
-        // console.log(results);
-        // if (league === 'National League') {
-        //     console.log(fixtures);
-        // }
-        const games = checkGames(fixtures, results, paths[league]);
-        for (const game of games) {
-            const leaderHome = results['leaders'].filter(leader => leader['name'] === game['home']);
-            const leaderAway = results['leaders'].filter(leader => leader['name'] === game['away']);
-            const bottomHome = results['bottoms'].filter(bottom => bottom['name'] === game['home']);
-            const bottomAway = results['bottoms'].filter(bottom => bottom['name'] === game['away']);
-            if (leaderHome.length === 1) {
-                game['home'] += ` (${leaderHome[0]['position']})`;
-                game['away'] += ` (${bottomAway[0]['position']})`;
-            } else {
-                game['home'] += ` (${bottomHome[0]['position']})`;
-                game['away'] += ` (${leaderAway[0]['position']})`;
+        try {
+            const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams']);
+            const fixtures = await fgetFixtures(paths[league]['fixtures']);
+            // console.log(results);
+            // if (league === 'National League') {
+            //     console.log(fixtures);
+            // }
+            const games = checkGames(fixtures, results, paths[league]);
+            for (const game of games) {
+                const leaderHome = results['leaders'].filter(leader => leader['name'] === game['home']);
+                const leaderAway = results['leaders'].filter(leader => leader['name'] === game['away']);
+                const bottomHome = results['bottoms'].filter(bottom => bottom['name'] === game['home']);
+                const bottomAway = results['bottoms'].filter(bottom => bottom['name'] === game['away']);
+                if (leaderHome.length === 1) {
+                    game['home'] += ` (${leaderHome[0]['position']})`;
+                    game['away'] += ` (${bottomAway[0]['position']})`;
+                } else {
+                    game['home'] += ` (${bottomHome[0]['position']})`;
+                    game['away'] += ` (${leaderAway[0]['position']})`;
+                }
+                let tableRow = game['date'].slice(0, 5) + ';' + game['home'] + ';' + game['away'] + ';' + game['leg'] + ';' + game['league'] + ';' + game['country'] + ';' + game['numberOfTeams'] + ';' + game['sport'] + '\n';
+                writer.write(tableRow);
             }
-            let tableRow = game['date'].slice(0, 5) + ';' + game['home'] + ';' + game['away'] + ';' + game['league'] + ';' + game['country'] + ';' + game['numberOfTeams'] + ';' + game['sport'] + '\n';
-            writer.write(tableRow);
+        } catch (err) {
+            console.log(`${paths[league]['name']} : FATAL ERROR`);
         }
     }
     const end = hrtime.bigint();

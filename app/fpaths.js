@@ -188,7 +188,7 @@ const paths = {
         'sport': 'Football',
         'country': 'Spain',
         'numberOfTeams': 20,
-        'table': 'https://www.flashscore.co.uk/football/spain/primera-rfef-group-2/standings/#/Sv9hGCYR/standings/overall/',
+        'table': 'https://www.flashscore.co.uk/football/spain/segunda-rfef-group-2/standings/#/QXgmt21t/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/football/spain/primera-rfef-group-2/fixtures/',
     },
     'Abissnet Superiore': {
