@@ -8,6 +8,7 @@ const checkGames = require('./utils');
 
 const numberOfGames = 10;
 const topQ = 3;
+const navigationTimeout = 120000;
 const bottomD = {
     12: 2,
     16: 3,
@@ -30,7 +31,8 @@ async function fgetLeaders(path, number) {
     const bottoms = [];
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(path);
+    // page.setDefaultNavigationTimeout(navigationTimeout);
+    await page.goto(path, { timeout: navigationTimeout });
     await page.setViewport({ width: 1080, height: 1024 });
     const leaderHandles = await page.$$('#tournament-table a.tableCellParticipant__name');
     // console.log(leaderHandles.length);
@@ -105,7 +107,7 @@ async function fgetFixtures(path) {
     const fixtures = [];
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(path);
+    await page.goto(path, { timeout: navigationTimeout });
     await page.setViewport({ width: 1080, height: 1024 });
     let fixtureHandles = await page.$$('div.wcl-participant_bctDY.event__homeParticipant');
     // console.log(fixtureHandles.length);
@@ -158,7 +160,7 @@ async function fgetFixtures(path) {
             }
         } catch (err) {
             console.log(`${paths[league]['name']} : FATAL ERROR`);
-            fs.writeFileSync('../data/log.txt', err.message, { flag: 'a+' });
+            fs.writeFileSync('../data/log.txt', `${err.message}\n`, { flag: 'a+' });
         }
     }
     const end = hrtime.bigint();
