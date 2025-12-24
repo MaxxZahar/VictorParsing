@@ -158,6 +158,7 @@ async function fgetFixtures(path) {
             }
         } catch (err) {
             console.log(`${paths[league]['name']} : FATAL ERROR`);
+            fs.writeFileSync('../data/log.txt', err.message, { flag: 'a+' });
         }
     }
     const end = hrtime.bigint();
