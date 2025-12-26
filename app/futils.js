@@ -15,7 +15,7 @@ const bottomD = {
     20: 4,
 };
 
-async function fgetLeaders(path, number) {
+async function fgetLeaders(path, number, browser) {
     // console.log(path);
     let bottomQ;
     if (number < 12) {
@@ -29,7 +29,7 @@ async function fgetLeaders(path, number) {
     }
     const leaders = [];
     const bottoms = [];
-    const browser = await puppeteer.launch({ headless: true });
+    // const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     // page.setDefaultNavigationTimeout(navigationTimeout);
     await page.goto(path, { timeout: navigationTimeout });
@@ -57,7 +57,8 @@ async function fgetLeaders(path, number) {
     }
     const legHandle = await page.$('#tournament-table .ui-table__row');
     const leg = await page.evaluate(el => el.querySelector('.table__cell.table__cell--value').textContent.trim(), legHandle);
-    await browser.close();
+    // await browser.close();
+    await page.close();
     return { 'leaders': leaders, 'bottoms': bottoms, 'leg': leg };
 }
 
@@ -103,9 +104,9 @@ async function getDates(handles, page) {
 }
 
 
-async function fgetFixtures(path) {
+async function fgetFixtures(path, browser) {
     const fixtures = [];
-    const browser = await puppeteer.launch({ headless: true });
+    // const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(path, { timeout: navigationTimeout });
     await page.setViewport({ width: 1080, height: 1024 });
@@ -122,13 +123,15 @@ async function fgetFixtures(path) {
         const fixture = { 'home': homeTeams[i], 'away': awayTeams[i], 'date': dates[i] };
         fixtures.push(fixture);
     }
-    await browser.close();
+    // await browser.close();
+    await page.close();
     return fixtures;
 }
 
 
 
 (async () => {
+    const browser = await puppeteer.launch({ headless: true });
     const start = hrtime.bigint();
     const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
@@ -136,8 +139,8 @@ async function fgetFixtures(path) {
     for (const league of Object.keys(paths)) {
         console.log(paths[league]['name']);
         try {
-            const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams']);
-            const fixtures = await fgetFixtures(paths[league]['fixtures']);
+            const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams'], browser);
+            const fixtures = await fgetFixtures(paths[league]['fixtures'], browser);
             // console.log(results);
             // if (league === 'National League') {
             //     console.log(fixtures);
@@ -165,4 +168,5 @@ async function fgetFixtures(path) {
     }
     const end = hrtime.bigint();
     console.log(`process took ${(end - start) / BigInt(60 * 10 ** 9)} minutes`);
+    await browser.close();
 })();
