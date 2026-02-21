@@ -8,12 +8,7 @@ const checkGames = require('./utils');
 
 const numberOfGames = 10;
 const topQ = 3;
-const navigationTimeout = 120000;
-const bottomD = {
-    12: 2,
-    16: 3,
-    20: 4,
-};
+const navigationTimeout = 180000;
 
 async function fgetLeaders(path, number, browser) {
     // console.log(path);
@@ -22,10 +17,8 @@ async function fgetLeaders(path, number, browser) {
         bottomQ = 2;
     } else if (number < 16) {
         bottomQ = 3;
-    } else if (number < 20) {
-        bottomQ = 4;
     } else {
-        bottomQ = 5;
+        bottomQ = 4;
     }
     const leaders = [];
     const bottoms = [];
@@ -128,6 +121,13 @@ async function fgetFixtures(path, browser) {
     return fixtures;
 }
 
+function newCheck(leadPosition, botPosition, numberOfTeams) {
+    if (leadPosition !== 1 && botPosition !== numberOfTeams) return false;
+    if (botPosition === numberOfTeams && numberOfTeams <= 12 && leadPosition > 2) return false;
+    if (botPosition === numberOfTeams && numberOfTeams <= 15 && leadPosition > 3) return false;
+    return true;
+}
+
 
 
 (async () => {
@@ -152,9 +152,15 @@ async function fgetFixtures(path, browser) {
                 const bottomHome = results['bottoms'].filter(bottom => bottom['name'] === game['home']);
                 const bottomAway = results['bottoms'].filter(bottom => bottom['name'] === game['away']);
                 if (leaderHome.length === 1) {
+                    if (!newCheck(leaderHome[0]['position'], bottomAway[0]['position'], game['numberOfTeams'])) {
+                        continue;
+                    }
                     game['home'] += ` (${leaderHome[0]['position']})`;
                     game['away'] += ` (${bottomAway[0]['position']})`;
                 } else {
+                    if (!newCheck(leaderAway[0]['position'], bottomHome[0]['position'], game['numberOfTeams'])) {
+                        continue;
+                    }
                     game['home'] += ` (${bottomHome[0]['position']})`;
                     game['away'] += ` (${leaderAway[0]['position']})`;
                 }
