@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
-const paths = require('./fpaths');
+// const paths = require('./fpaths');
 // for dev test
-// const paths = require('./tpaths');
+const paths = require('./tpaths');
 const { hrtime } = require('node:process');
 const fs = require('fs');
 const checkGames = require('./utils');
@@ -9,6 +9,20 @@ const checkGames = require('./utils');
 const numberOfGames = 10;
 const topQ = 3;
 const navigationTimeout = 180000;
+const containers = {
+    'Football': {
+        'home': 'div.wcl-participant_bctDY.event__homeParticipant',
+        'away': 'div.wcl-participant_bctDY.event__awayParticipant'
+    },
+    'Ice Hockey': {
+        'home': 'div.event__participant.event__participant--home',
+        'away': 'div.event__participant.event__participant--away'
+    },
+    'Basketball': {
+        'home': 'div.event__participant.event__participant--home',
+        'away': 'div.event__participant.event__participant--away'
+    },
+}
 
 async function fgetLeaders(path, number, browser) {
     // console.log(path);
@@ -56,13 +70,18 @@ async function fgetLeaders(path, number, browser) {
 }
 
 
-async function getNames(handles, page) {
+async function getNames(handles, page, sport) {
+    console.log(sport);
     const names = [];
     for (let i = 0; i < numberOfGames; i++) {
         try {
-            const teamName = await page.evaluate(el =>
-                el.querySelector('span').textContent.trim(), handles[i]
-            );
+            const teamName = await page.evaluate(el => {
+                if (sport === 'Football') {
+                    return el.querySelector('span').textContent.trim()
+                } else {
+                    return el.textContent.trim()
+                }
+            }, handles[i]);
             // console.log(teamName);
             names.push(teamName);
             // console.log(teamName);
@@ -97,19 +116,19 @@ async function getDates(handles, page) {
 }
 
 
-async function fgetFixtures(path, browser) {
+async function fgetFixtures(path, browser, sport) {
     const fixtures = [];
     // const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(path, { timeout: navigationTimeout });
     await page.setViewport({ width: 1080, height: 1024 });
-    let fixtureHandles = await page.$$('div.wcl-participant_bctDY.event__homeParticipant');
-    // console.log(fixtureHandles.length);
+    let fixtureHandles = await page.$$(containers[sport]['home']);
+    console.log(fixtureHandles.length);
     // console.log(fixtureHandles[0]);
 
-    const homeTeams = await getNames(fixtureHandles, page);
-    fixtureHandles = await page.$$('div.wcl-participant_bctDY.event__awayParticipant');
-    const awayTeams = await getNames(fixtureHandles, page);
+    const homeTeams = await getNames(fixtureHandles, page, sport);
+    fixtureHandles = await page.$$(containers[sport]['away']);
+    const awayTeams = await getNames(fixtureHandles, page, sport);
     fixtureHandles = await page.$$('#live-table .event__time');
     const dates = await getDates(fixtureHandles, page);
     for (let i = 0; i < numberOfGames; i++) {
@@ -140,8 +159,9 @@ function newCheck(leadPosition, botPosition, numberOfTeams) {
         console.log(paths[league]['name']);
         try {
             const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams'], browser);
-            const fixtures = await fgetFixtures(paths[league]['fixtures'], browser);
-            // console.log(results);
+            const fixtures = await fgetFixtures(paths[league]['fixtures'], browser, paths[league]['sport']);
+            console.log(results);
+            console.log(fixtures);
             // if (league === 'National League') {
             //     console.log(fixtures);
             // }
