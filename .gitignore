@@ -2,4 +2,5 @@ app/node_modules
 app/res.js
 data/games.csv
 data/log.txt
+data/todo.txt
 .vscode

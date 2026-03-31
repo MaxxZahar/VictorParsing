@@ -6,26 +6,36 @@ const { hrtime } = require('node:process');
 const fs = require('fs');
 const checkGames = require('./utils');
 
-const numberOfGames = 10;
+const numberOfGames = 20;
 const topQ = 3;
 const navigationTimeout = 180000;
+const baseDelay = 30000;
+const delayInterval = 3000;
 const containers = {
-    'Football': {
-        'home': 'div.wcl-participant_bctDY.event__homeParticipant',
-        'away': 'div.wcl-participant_bctDY.event__awayParticipant'
-    },
-    'Ice Hockey': {
-        'home': 'div.event__participant.event__participant--home',
-        'away': 'div.event__participant.event__participant--away'
-    },
-    'Basketball': {
-        'home': 'div.event__participant.event__participant--home',
-        'away': 'div.event__participant.event__participant--away'
-    },
+    // 'Football': {
+    //     'home': 'div.wcl-participant_bctDY.event__homeParticipant',
+    //     'away': 'div.wcl-participant_bctDY.event__awayParticipant'
+    // },
+    // 'Ice Hockey': {
+    //     'home': 'div.event__participant.event__participant--home',
+    //     'away': 'div.event__participant.event__participant--away'
+    // },
+    // 'Basketball': {
+    //     'home': 'div.event__participant.event__participant--home',
+    //     'away': 'div.event__participant.event__participant--away'
+    // },
+    'Home': ['div.wcl-participant_bctDY.event__homeParticipant',
+        'div.event__participant.event__participant--home'
+    ],
+    'Away': ['div.wcl-participant_bctDY.event__awayParticipant',
+        'div.event__participant.event__participant--away'
+    ]
 }
 
 async function fgetLeaders(path, number, browser) {
     // console.log(path);
+    const randomDelay = Math.floor(Math.random() * delayInterval) + baseDelay;
+    await new Promise(r => setTimeout(r, randomDelay));
     let bottomQ;
     if (number < 12) {
         bottomQ = 2;
@@ -41,8 +51,10 @@ async function fgetLeaders(path, number, browser) {
     // page.setDefaultNavigationTimeout(navigationTimeout);
     await page.goto(path, { timeout: navigationTimeout });
     await page.setViewport({ width: 1080, height: 1024 });
-    const leaderHandles = await page.$$('#tournament-table a.tableCellParticipant__name');
-    // console.log(leaderHandles.length);
+    await page.waitForSelector('#tournamentPage a.tableCellParticipant__name', { visible: true })
+    //const leaderHandles = await page.$$('#tournament-table a.tableCellParticipant__name');
+    const leaderHandles = await page.$$('#tournamentPage a.tableCellParticipant__name')
+    console.log(leaderHandles.length);
     // console.log(leaderHandles[0]);
     for (let i = 0; i < topQ; i++) {
         try {
@@ -62,7 +74,7 @@ async function fgetLeaders(path, number, browser) {
             console.log(err.message);
         }
     }
-    const legHandle = await page.$('#tournament-table .ui-table__row');
+    const legHandle = await page.$('#tournamentPage .ui-table__row');
     const leg = await page.evaluate(el => el.querySelector('.table__cell.table__cell--value').textContent.trim(), legHandle);
     // await browser.close();
     await page.close();
@@ -70,13 +82,20 @@ async function fgetLeaders(path, number, browser) {
 }
 
 
+async function getFixturesHandles(page, place) {
+    for (const container of containers[place]) {
+        const candidates = await page.$$(container);
+        if (candidates && candidates.length > 0) return candidates;
+    }
+}
+
 async function getNames(handles, page, sport) {
     console.log(sport);
     const names = [];
     for (let i = 0; i < numberOfGames; i++) {
         try {
             const teamName = await page.evaluate(el => {
-                if (sport === 'Football') {
+                if (el.querySelector('span')) {
                     return el.querySelector('span').textContent.trim()
                 } else {
                     return el.textContent.trim()
@@ -122,14 +141,16 @@ async function fgetFixtures(path, browser, sport) {
     const page = await browser.newPage();
     await page.goto(path, { timeout: navigationTimeout });
     await page.setViewport({ width: 1080, height: 1024 });
-    let fixtureHandles = await page.$$(containers[sport]['home']);
-    console.log(fixtureHandles.length);
+    // let fixtureHandles = await page.$$(containers[sport]['home']);
+    let fixtureHandles = await getFixturesHandles(page, 'Home');
+    if (fixtureHandles) console.log(fixtureHandles.length);
     // console.log(fixtureHandles[0]);
 
     const homeTeams = await getNames(fixtureHandles, page, sport);
-    fixtureHandles = await page.$$(containers[sport]['away']);
+    //fixtureHandles = await page.$$(containers[sport]['away']);
+    fixtureHandles = await getFixturesHandles(page, 'Away');
     const awayTeams = await getNames(fixtureHandles, page, sport);
-    fixtureHandles = await page.$$('#live-table .event__time');
+    fixtureHandles = await page.$$('#tournamentPage .event__time');
     const dates = await getDates(fixtureHandles, page);
     for (let i = 0; i < numberOfGames; i++) {
         const fixture = { 'home': homeTeams[i], 'away': awayTeams[i], 'date': dates[i] };
@@ -157,10 +178,12 @@ function newCheck(leadPosition, botPosition, numberOfTeams) {
     writer.write(header);
     for (const league of Object.keys(paths)) {
         console.log(paths[league]['name']);
+        paths[league]['table'] = paths[league]['table'].replace('/#', '');
         try {
             const results = await fgetLeaders(paths[league]['table'], paths[league]['numberOfTeams'], browser);
-            const fixtures = await fgetFixtures(paths[league]['fixtures'], browser, paths[league]['sport']);
             console.log(results);
+            const fixtures = await fgetFixtures(paths[league]['fixtures'], browser, paths[league]['sport']);
+
             console.log(fixtures);
             // if (league === 'National League') {
             //     console.log(fixtures);
