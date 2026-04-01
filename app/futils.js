@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
-// const paths = require('./fpaths');
+const paths = require('./fpaths');
 // for dev test
-const paths = require('./tpaths');
+// const paths = require('./tpaths');
 const { hrtime } = require('node:process');
 const fs = require('fs');
 const checkGames = require('./utils');
@@ -176,6 +176,8 @@ function newCheck(leadPosition, botPosition, numberOfTeams) {
     const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
     let writer = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
     writer.write(header);
+    const quantity = Object.keys(paths).length;
+    console.log(`Quantity: ${quantity}`);
     for (const league of Object.keys(paths)) {
         console.log(paths[league]['name']);
         paths[league]['table'] = paths[league]['table'].replace('/#', '');
@@ -212,7 +214,8 @@ function newCheck(leadPosition, botPosition, numberOfTeams) {
             }
         } catch (err) {
             console.log(`${paths[league]['name']} : FATAL ERROR`);
-            fs.writeFileSync('../data/log.txt', `${err.message}\n`, { flag: 'a+' });
+            const now = new Date();
+            fs.writeFileSync('../data/log.txt', `${now.toString()}: ${err.message}: ${paths[league]['name']}\n`, { flag: 'a+' });
         }
     }
     const end = hrtime.bigint();
