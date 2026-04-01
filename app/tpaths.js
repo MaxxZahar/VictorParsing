@@ -103,7 +103,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/croatia/superliga-women/standings/#/ImQBFPy8/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/croatia/superliga-women/fixtures/',
     },
-    'Extraliga': {
+    'Extraliga CZEV': {
         'name': 'Extraliga',
         'sport': 'Volleyball',
         'country': 'Czech Republic',
@@ -111,7 +111,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/czech-republic/extraliga/standings/#/reiEGDcK/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/czech-republic/extraliga/fixtures/',
     },
-    'Extraliga Women': {
+    'Extraliga Women CZEV': {
         'name': 'Extraliga Women',
         'sport': 'Volleyball',
         'country': 'Czech Republic',
@@ -135,7 +135,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/denmark/volleyligaen-women/standings/#/2wqzNa3F/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/denmark/volleyligaen-women/fixtures/',
     },
-    'Super League': {
+    'Super League ENGV': {
         'name': 'Super League',
         'sport': 'Volleyball',
         'country': 'England',
@@ -207,7 +207,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/germany/1-bundesliga-women/standings/#/4KlnFuYj/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/germany/1-bundesliga-women/fixtures/',
     },
-    'A1': {
+    'A1 GREV': {
         'name': 'A1',
         'sport': 'Volleyball',
         'country': 'Greece',
@@ -215,7 +215,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/greece/a1/standings/#/2Zh74n2n/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/greece/a1/fixtures/',
     },
-    'A1 Women': {
+    'A1 Women GREV': {
         'name': 'A1 Women',
         'sport': 'Volleyball',
         'country': 'Greece',
@@ -279,7 +279,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/italy/superlega/standings/#/CMyd5b1D/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/italy/superlega/fixtures/',
     },
-    'Serie A1 Women': {
+    'Serie A1 Women ITAV': {
         'name': 'Serie A1 Women',
         'sport': 'Volleyball',
         'country': 'Italy',
@@ -303,7 +303,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/japan/sv-league-women/standings/#/nRncuEAM/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/japan/sv-league-women/fixtures/',
     },
-    'National League': {
+    'National League KAZV': {
         'name': 'National League',
         'sport': 'Volleyball',
         'country': 'Kazakhstan',
@@ -335,7 +335,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/montenegro/superliga-women/standings/#/SxnWFGhd/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/montenegro/superliga-women/fixtures/',
     },
-    'Eredivisie': {
+    'Eredivisie NETV': {
         'name': 'Eredivisie',
         'sport': 'Volleyball',
         'country': 'Netherlands',
@@ -351,7 +351,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/netherlands/eredivisie-women/standings/#/6mgN4gHb/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/netherlands/eredivisie-women/fixtures/',
     },
-    'Eliteserien': {
+    'Eliteserien NORV': {
         'name': 'Eliteserien',
         'sport': 'Volleyball',
         'country': 'Norway',
@@ -399,7 +399,7 @@ const paths = {
         'table': 'https://www.flashscore.co.uk/volleyball/poland/tauron-liga-women/standings/#/IqOgnHwh/standings/overall/',
         'fixtures': 'https://www.flashscore.co.uk/volleyball/poland/tauron-liga-women/fixtures/',
     },
-    'Campeonato Nacional': {
+    'Campeonato Nacional PORV': {
         'name': 'Campeonato Nacional',
         'sport': 'Volleyball',
         'country': 'Portugal',
