@@ -26,7 +26,7 @@ async function getTeams(path, number, browser) {
         teams.push(record);
     }
     teams.sort((a, b) => b['points'] - a['points']);
-    console.log(teams);
+    return teams;
 }
 
 
