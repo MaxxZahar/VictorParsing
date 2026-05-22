@@ -5,11 +5,27 @@ const fs = require('fs');
 
 const numberOfGames = 20;
 const topQ = 3;
+const bottomQ = 3;
 const navigationTimeout = 180000;
 const baseDelay = 30000;
 const delayInterval = 3000;
 
-async function getTeams(path, number, browser) {
+function filterFixtures(teams, fixtures) {
+    const filteredFixtures = [];
+    const tops = [teams[0], teams[1], teams[2]].map(el => el['name']);
+    const bottoms = [teams.at(-1), teams.at(-2), teams.at(-3)].map(el => el['name']);
+    for (const fixture of fixtures) {
+        if ((fixture['home'] === teams[0]['name'] && bottoms.includes(fixture['away'])) ||
+            (fixture['away'] === teams[0]['name'] && bottoms.includes(fixture['home'])) ||
+            (fixture['home'] === teams.at(-1)['name'] && tops.includes(fixture['away'])) ||
+            (fixture['away'] === teams.at(-1)['name'] && tops.includes(fixture['home']))) {
+            filteredFixtures.push(fixture);
+        }
+    }
+    return filteredFixtures;
+}
+
+async function getTeams(path, browser) {
     const randomDelay = Math.floor(Math.random() * delayInterval) + baseDelay;
     await new Promise(r => setTimeout(r, randomDelay));
     const teams = [];
@@ -45,10 +61,17 @@ async function getFixtures(path, browser) {
     return fixtures;
 }
 
+async function getFilteredFixtures(browser, league) {
+    const teams = await getTeams(league['table'], browser);
+    const numberOfTeams = teams.length;
+    const fixtures = await getFixtures(league['fixtures'], browser);
+    return filterFixtures(teams, fixtures);
+}
+
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
     // await getTeams(paths['J1']['table'], 10, browser);
-    console.log(await getFixtures(paths['J1']['fixtures'], browser));
+    console.log(await getFilteredFixtures(browser, paths['J1']));
     await browser.close();
 })();
