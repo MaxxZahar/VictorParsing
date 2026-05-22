@@ -35,10 +35,12 @@ async function getTeams(path, browser) {
     await page.waitForSelector('#tournamentPage a.tableCellParticipant__name', { visible: true });
     const teamHandles = await page.$$('#tournamentPage a.tableCellParticipant__name');
     const pointHandles = await page.$$('#tournamentPage span.table__cell--points');
+    const gamesHandles = await page.$$('#tournamentPage .ui-table__row');
     for (let i = 0; i < teamHandles.length; i++) {
         const team = await page.evaluate(el => el.textContent.trim(), teamHandles[i]);
         const points = await page.evaluate(el => el.textContent.trim(), pointHandles[i]);
-        const record = { 'name': team, 'points': Number(points) };
+        const gamesPlayed = await page.evaluate(el => el.querySelectorAll('.table__cell--value')[0].textContent.trim(), gamesHandles[i]);
+        const record = { 'name': team, 'points': Number(points), 'gp': Number(gamesPlayed) };
         teams.push(record);
     }
     teams.sort((a, b) => b['points'] - a['points']);
