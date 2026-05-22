@@ -25,6 +25,15 @@ function filterFixtures(teams, fixtures) {
     return filteredFixtures;
 }
 
+function writeData(fFixtures, league, stream) {
+    const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
+    stream.write(header);
+    for (const fixture of fFixtures[0]) {
+        const str = `${fixture['date']};${fixture['home']};${fixture['away']};${fFixtures[1]};${league['name']};${league['country']};${league['numberOfTeams']};${league['sport']}\n`;
+        stream.write(str);
+    }
+}
+
 async function getTeams(path, browser) {
     const randomDelay = Math.floor(Math.random() * delayInterval) + baseDelay;
     await new Promise(r => setTimeout(r, randomDelay));
@@ -67,13 +76,14 @@ async function getFilteredFixtures(browser, league) {
     const teams = await getTeams(league['table'], browser);
     const numberOfTeams = teams.length;
     const fixtures = await getFixtures(league['fixtures'], browser);
-    return filterFixtures(teams, fixtures);
+    return [filterFixtures(teams, fixtures), teams[0]['gp']];
 }
 
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
-    // await getTeams(paths['J1']['table'], 10, browser);
-    console.log(await getFilteredFixtures(browser, paths['J1']));
+    const stream = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
+    writeData(await getFilteredFixtures(browser, paths['J1']), paths['J1'], stream);
+    stream.end();
     await browser.close();
 })();
