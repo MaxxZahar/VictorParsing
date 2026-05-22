@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
-const paths = require('./fpaths');
+const paths = require('./paths');
+
 // for dev test
 // const paths = require('./tpaths');
 const { hrtime } = require('node:process');
