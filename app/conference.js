@@ -29,9 +29,26 @@ async function getTeams(path, number, browser) {
     return teams;
 }
 
+async function getFixtures(path, browser) {
+    const page = await browser.newPage();
+    await page.goto(path, { timeout: navigationTimeout });
+    await page.setViewport({ width: 1080, height: 1024 });
+    const fixtureHandles = await page.$$('.event__match--withRowLink');
+    const fixtures = [];
+    for (let i = 0; i < fixtureHandles.length; i++) {
+        const date = await page.evaluate(el => el.querySelector('.event__time').textContent.trim(), fixtureHandles[i]);
+        const home = await page.evaluate(el => el.querySelector('.wcl-participant_bctDY.event__homeParticipant span').textContent.trim(), fixtureHandles[i]);
+        const away = await page.evaluate(el => el.querySelector('.wcl-participant_bctDY.event__awayParticipant span').textContent.trim(), fixtureHandles[i]);
+        const record = { 'date': date, 'home': home, 'away': away };
+        fixtures.push(record);
+    }
+    return fixtures;
+}
+
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
-    await getTeams(paths['J1']['table'], 10, browser);
+    // await getTeams(paths['J1']['table'], 10, browser);
+    console.log(await getFixtures(paths['J1']['fixtures'], browser));
     await browser.close();
 })();
