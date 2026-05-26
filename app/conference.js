@@ -3,7 +3,7 @@ const paths = require('./cpaths');
 const { hrtime } = require('node:process');
 const fs = require('fs');
 
-const numberOfGames = 20;
+const numberOfGames = 30;
 const topQ = 3;
 const bottomQ = 3;
 const navigationTimeout = 180000;
@@ -26,8 +26,6 @@ function filterFixtures(teams, fixtures) {
 }
 
 function writeData(fFixtures, league, stream) {
-    const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
-    stream.write(header);
     for (const fixture of fFixtures[0]) {
         const str = `${fixture['date']};${fixture['home']};${fixture['away']};${fFixtures[1]};${league['name']};${league['country']};${league['numberOfTeams']};${league['sport']}\n`;
         stream.write(str);
@@ -83,7 +81,13 @@ async function getFilteredFixtures(browser, league) {
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
     const stream = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
-    writeData(await getFilteredFixtures(browser, paths['J1']), paths['J1'], stream);
+    const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
+    stream.write(header);
+    console.log(`Quantity: ${Object.keys(paths).length}`);
+    for (const league in paths) {
+        console.log(paths[league]["name"]);
+        writeData(await getFilteredFixtures(browser, paths[league]), paths[league], stream);
+    }
     stream.end();
     await browser.close();
 })();
