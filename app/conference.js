@@ -79,15 +79,27 @@ async function getFilteredFixtures(browser, league) {
 
 
 (async () => {
+    const start = hrtime.bigint();
     const browser = await puppeteer.launch({ headless: true });
     const stream = fs.createWriteStream('../data/games.csv', { encoding: 'utf8' });
     const header = `Date;Home;Away;Games played;League;Country;Teams;Sport\n`;
     stream.write(header);
-    console.log(`Quantity: ${Object.keys(paths).length}`);
+    const quantity = Object.keys(paths).length;
+    let counter = 0;
+    console.log(`Quantity: ${quantity}`);
     for (const league in paths) {
-        console.log(paths[league]["name"]);
-        writeData(await getFilteredFixtures(browser, paths[league]), paths[league], stream);
+        counter++;
+        console.log(`${counter} | ${quantity}\t${paths[league]["name"]}`);
+        try {
+            writeData(await getFilteredFixtures(browser, paths[league]), paths[league], stream);
+        } catch (err) {
+            console.log(`${paths[league]['name']} : FATAL ERROR`);
+            const now = new Date();
+            fs.writeFileSync('../data/log.txt', `${now.toString()}: ${err.message}: ${paths[league]['name']}\n`, { flag: 'a+' });
+        }
     }
     stream.end();
     await browser.close();
+    const end = hrtime.bigint();
+    console.log(`Process took ${(end - start) / BigInt(60 * 10 ** 9)} minutes`);
 })();
