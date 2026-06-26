@@ -15,6 +15,14 @@ const paths = {
         "table": "https://www.flashscore.co.uk/football/usa/mls/standings/bgQzSI5N/standings/overall/",
         "fixtures": "https://www.flashscore.co.uk/football/usa/mls/fixtures/",
     },
+    'MLB': {
+        "name": "MLB",
+        "sport": "Baseball",
+        "country": "USA",
+        "numberOfTeams": 30,
+        "table": "https://www.flashscore.co.uk/baseball/usa/mlb/standings/Iq4v1CJG/standings/overall/",
+        "fixtures": "https://www.flashscore.co.uk/baseball/usa/mlb/fixtures/",
+    },
 }
 
 module.exports = paths;

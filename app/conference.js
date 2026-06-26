@@ -72,6 +72,7 @@ async function getFixtures(path, browser) {
 
 async function getFilteredFixtures(browser, league) {
     const teams = await getTeams(league['table'], browser);
+    console.log(teams);
     const numberOfTeams = teams.length;
     const fixtures = await getFixtures(league['fixtures'], browser);
     return [filterFixtures(teams, fixtures), teams[0]['gp']];
