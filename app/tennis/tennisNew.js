@@ -25,9 +25,12 @@ async function getData(path, browser) {
     }
     const rankHandles = await page.$$('td.t-info');
     const ranks = [];
+    const tournaments = [];
     for (let i = 0; i < rankHandles.length; i++) {
         const rank = await page.evaluate(el => el.querySelector('span').textContent.trim().split(' ')[0], rankHandles[i]);
         ranks.push(Number(rank));
+        const tournament = await page.evaluate(el => el.parentElement.parentElement.querySelector('a').textContent.trim(), nameHandles[i]);
+        tournaments.push(tournament);
     }
     const records = [];
     for (let i = 0; i < names.length - 1; i += 2) {
@@ -37,7 +40,7 @@ async function getData(path, browser) {
         const rank2 = ranks[i + 1];
         let record = '';
         if (rank1 > 0 && rank2 > 0 && Math.abs(rank1 - rank2) >= delta) {
-            record = `${player1};${rank1};${player2};${rank2};${Math.abs(rank1 - rank2)}`;
+            record = `${player1};${rank1};${player2};${rank2};${Math.abs(rank1 - rank2)};${tournaments[i]}`;
             records.push(record);
         }
     }
@@ -48,7 +51,7 @@ async function getData(path, browser) {
 (async () => {
     const start = hrtime.bigint();
     const browser = await puppeteer.launch({ headless: true });
-    const header = `Player;Rank;Player;Rank;Delta;\n`;
+    const header = `Player;Rank;Player;Rank;Delta;Tournament\n`;
     let writer = fs.createWriteStream('../../data/tennis.csv', { encoding: 'utf8' });
     writer.write(header);
     const records = await getData(path, browser);
